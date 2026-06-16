@@ -7,6 +7,30 @@
 </head>
 <body>
   <h1>Hệ thống quản lý cửa hàng điện thoại</h1>
+
+  <section>
+    <h2>Quản lý sản phẩm điện thoại</h2>
+    <form id="productForm">
+      <input type="text" id="productName" placeholder="Tên điện thoại">
+      <input type="text" id="brand" placeholder="Hãng">
+      <input type="number" id="price" placeholder="Giá bán">
+      <input type="number" id="quantity" placeholder="Số lượng">
+      <button type="submit">Thêm sản phẩm</button>
+    </form>
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Tên điện thoại</th>
+          <th>Hãng</th>
+          <th>Giá</th>
+          <th>Số lượng</th>
+        </tr>
+      </thead>
+      <tbody id="productList"></tbody>
+    </table>
+  </section>
+
   <script src="app.js"></script>
 </body>
 </html>
