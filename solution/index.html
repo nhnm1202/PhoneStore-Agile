@@ -2,11 +2,137 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hệ thống quản lý cửa hàng điện thoại</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Hệ thống quản lý cửa hàng điện thoại</h1>
+  <section id="loginSection" class="login-page">
+    <form id="loginForm" class="login-box">
+      <h1>Phone Store</h1>
+      <p>Hệ thống quản lý cửa hàng điện thoại</p>
+
+      <input type="text" id="username" placeholder="Tài khoản" required>
+      <input type="password" id="password" placeholder="Mật khẩu" required>
+
+      <button type="submit">Đăng nhập</button>
+      <span id="loginMessage"></span>
+
+      <small>Tài khoản mẫu: admin / 123456</small>
+    </form>
+  </section>
+
+  <section id="appSection" class="app hidden">
+    <aside class="sidebar">
+      <h2>Phone Store</h2>
+      <button class="menu active" data-target="dashboard">Dashboard</button>
+      <button class="menu" data-target="products">Sản phẩm</button>
+      <button class="menu" data-target="customers">Khách hàng</button>
+      <button class="menu" data-target="orders">Đơn hàng</button>
+      <button class="menu" data-target="reports">Báo cáo</button>
+      <button id="logoutBtn" class="logout">Đăng xuất</button>
+    </aside>
+
+    <main class="content">
+      <section id="dashboard" class="page active-page">
+        <h1>Dashboard</h1>
+        <div class="stats">
+          <div class="card"><span id="statProducts">0</span><p>Sản phẩm</p></div>
+          <div class="card"><span id="statCustomers">0</span><p>Khách hàng</p></div>
+          <div class="card"><span id="statOrders">0</span><p>Đơn hàng</p></div>
+          <div class="card"><span id="statRevenue">0đ</span><p>Doanh thu</p></div>
+        </div>
+      </section>
+
+      <section id="products" class="page">
+        <h1>Quản lý sản phẩm điện thoại</h1>
+        <form id="productForm" class="form-grid">
+          <input type="hidden" id="productId">
+          <input type="text" id="productName" placeholder="Tên điện thoại" required>
+          <input type="text" id="brand" placeholder="Hãng" required>
+          <input type="number" id="price" placeholder="Giá bán" required>
+          <input type="number" id="quantity" placeholder="Số lượng" required>
+          <input type="text" id="description" placeholder="Mô tả">
+          <button type="submit">Lưu sản phẩm</button>
+        </form>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Tên điện thoại</th>
+              <th>Hãng</th>
+              <th>Giá</th>
+              <th>Tồn kho</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="productList"></tbody>
+        </table>
+      </section>
+
+      <section id="customers" class="page">
+        <h1>Quản lý khách hàng</h1>
+        <form id="customerForm" class="form-grid">
+          <input type="hidden" id="customerId">
+          <input type="text" id="customerName" placeholder="Họ tên khách hàng" required>
+          <input type="text" id="customerPhone" placeholder="Số điện thoại" required>
+          <input type="text" id="customerAddress" placeholder="Địa chỉ">
+          <button type="submit">Lưu khách hàng</button>
+        </form>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Họ tên</th>
+              <th>Số điện thoại</th>
+              <th>Địa chỉ</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="customerList"></tbody>
+        </table>
+      </section>
+
+      <section id="orders" class="page">
+        <h1>Lập đơn bán hàng</h1>
+        <form id="orderForm" class="form-grid">
+          <select id="orderCustomer" required>
+            <option value="">Chọn khách hàng</option>
+          </select>
+
+          <select id="orderProduct" required>
+            <option value="">Chọn sản phẩm</option>
+          </select>
+
+          <input type="number" id="orderQuantity" placeholder="Số lượng" required>
+          <button type="submit">Tạo đơn hàng</button>
+        </form>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Khách hàng</th>
+              <th>Sản phẩm</th>
+              <th>Số lượng</th>
+              <th>Tổng tiền</th>
+              <th>Ngày bán</th>
+            </tr>
+          </thead>
+          <tbody id="orderList"></tbody>
+        </table>
+      </section>
+
+      <section id="reports" class="page">
+        <h1>Báo cáo doanh thu</h1>
+        <div class="report-box">
+          <p>Tổng doanh thu: <strong id="reportRevenue">0đ</strong></p>
+          <p>Số sản phẩm đã bán: <strong id="reportSold">0</strong></p>
+          <p>Tổng số đơn hàng: <strong id="reportOrders">0</strong></p>
+        </div>
+      </section>
+    </main>
+  </section>
+
   <script src="app.js"></script>
 </body>
 </html>
