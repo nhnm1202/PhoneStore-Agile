@@ -9,7 +9,7 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
-
+app.use(express.static(path.join(__dirname, "../solution")));
 const databasePath = path.join(__dirname, "database", "phone_store.db");
 const schemaPath = path.join(__dirname, "database", "schema.sql");
 const seedPath = path.join(__dirname, "database", "seed.sql");
@@ -37,7 +37,7 @@ function initDatabase() {
 
 initDatabase();
 
-app.get("/", (req, res) => {
+app.get("/api/status", (req, res) => {
   res.send("API hệ thống quản lý cửa hàng điện thoại đang chạy");
 });
 
