@@ -32,6 +32,11 @@ const reportOrders = document.getElementById("reportOrders");
 let products = [];
 let customers = [];
 let orders = [];
+let report = {
+  total_revenue: 0,
+  products_sold: 0,
+  total_orders: 0
+};
 
 loginForm.addEventListener("submit", async function (event) {
   event.preventDefault();
@@ -57,10 +62,8 @@ loginForm.addEventListener("submit", async function (event) {
 
     loginSection.classList.add("hidden");
     appSection.classList.remove("hidden");
-    await loadProducts();
-    renderCustomers();
-    renderOrders();
-    updateDashboard();
+
+    await loadAllData();
   } catch (error) {
     loginMessage.textContent = "Không kết nối được API";
   }
@@ -78,17 +81,20 @@ menuButtons.forEach((button) => {
   });
 });
 
+async function loadAllData() {
+  await loadProducts();
+  await loadCustomers();
+  await loadOrders();
+  await loadReport();
+  updateDashboard();
+}
+
 async function loadProducts() {
-  try {
-    const response = await fetch(`${API_URL}/products`);
-    products = await response.json();
-    renderProducts();
-    renderProductOptions();
-    updateDashboard();
-  } catch (error) {
-    products = [];
-    renderProducts();
-  }
+  const response = await fetch(`${API_URL}/products`);
+  products = await response.json();
+
+  renderProducts();
+  renderProductOptions();
 }
 
 function renderProducts() {
@@ -138,7 +144,8 @@ productForm.addEventListener("submit", async function (event) {
 
   productForm.reset();
   document.getElementById("productId").value = "";
-  await loadProducts();
+
+  await loadAllData();
 });
 
 function editProduct(id) {
@@ -160,26 +167,16 @@ async function deleteProduct(id) {
     method: "DELETE"
   });
 
-  await loadProducts();
+  await loadAllData();
 }
 
-customerForm.addEventListener("submit", function (event) {
-  event.preventDefault();
-
-  const customer = {
-    id: Date.now(),
-    fullName: document.getElementById("customerName").value,
-    phone: document.getElementById("customerPhone").value,
-    address: document.getElementById("customerAddress").value
-  };
-
-  customers.push(customer);
-  customerForm.reset();
+async function loadCustomers() {
+  const response = await fetch(`${API_URL}/customers`);
+  customers = await response.json();
 
   renderCustomers();
   renderCustomerOptions();
-  updateDashboard();
-});
+}
 
 function renderCustomers() {
   customerList.innerHTML = "";
@@ -188,9 +185,9 @@ function renderCustomers() {
     const row = document.createElement("tr");
 
     row.innerHTML = `
-      <td>${customer.fullName}</td>
+      <td>${customer.full_name}</td>
       <td>${customer.phone}</td>
-      <td>${customer.address}</td>
+      <td>${customer.address || ""}</td>
       <td>
         <button class="btn-delete" onclick="deleteCustomer(${customer.id})">Xóa</button>
       </td>
@@ -198,14 +195,38 @@ function renderCustomers() {
 
     customerList.appendChild(row);
   });
-
-  renderCustomerOptions();
 }
 
-function deleteCustomer(id) {
-  customers = customers.filter((customer) => customer.id !== id);
-  renderCustomers();
-  updateDashboard();
+customerForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+
+  const customer = {
+    full_name: document.getElementById("customerName").value,
+    phone: document.getElementById("customerPhone").value,
+    address: document.getElementById("customerAddress").value
+  };
+
+  await fetch(`${API_URL}/customers`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(customer)
+  });
+
+  customerForm.reset();
+
+  await loadAllData();
+});
+
+async function deleteCustomer(id) {
+  if (!confirm("Bạn có chắc muốn xóa khách hàng này?")) return;
+
+  await fetch(`${API_URL}/customers/${id}`, {
+    method: "DELETE"
+  });
+
+  await loadAllData();
 }
 
 function renderCustomerOptions() {
@@ -214,7 +235,7 @@ function renderCustomerOptions() {
   customers.forEach((customer) => {
     const option = document.createElement("option");
     option.value = customer.id;
-    option.textContent = customer.fullName;
+    option.textContent = customer.full_name;
     orderCustomer.appendChild(option);
   });
 }
@@ -225,52 +246,17 @@ function renderProductOptions() {
   products.forEach((product) => {
     const option = document.createElement("option");
     option.value = product.id;
-    option.textContent = `${product.name} - ${formatCurrency(product.price)}`;
+    option.textContent = `${product.name} - ${formatCurrency(product.price)} - Tồn: ${product.quantity}`;
     orderProduct.appendChild(option);
   });
 }
 
-orderForm.addEventListener("submit", function (event) {
-  event.preventDefault();
+async function loadOrders() {
+  const response = await fetch(`${API_URL}/orders`);
+  orders = await response.json();
 
-  const customerId = Number(orderCustomer.value);
-  const productId = Number(orderProduct.value);
-  const quantity = Number(orderQuantity.value);
-
-  const customer = customers.find((item) => item.id === customerId);
-  const product = products.find((item) => item.id === productId);
-
-  if (!customer || !product) {
-    alert("Vui lòng chọn khách hàng và sản phẩm");
-    return;
-  }
-
-  if (quantity <= 0 || quantity > product.quantity) {
-    alert("Số lượng không hợp lệ hoặc vượt quá tồn kho");
-    return;
-  }
-
-  const total = product.price * quantity;
-
-  const order = {
-    id: Date.now(),
-    customerName: customer.fullName,
-    productName: product.name,
-    quantity,
-    total,
-    date: new Date().toLocaleDateString("vi-VN")
-  };
-
-  orders.push(order);
-  product.quantity -= quantity;
-
-  orderForm.reset();
-
-  renderProducts();
-  renderProductOptions();
   renderOrders();
-  updateDashboard();
-});
+}
 
 function renderOrders() {
   orderList.innerHTML = "";
@@ -279,31 +265,79 @@ function renderOrders() {
     const row = document.createElement("tr");
 
     row.innerHTML = `
-      <td>${order.customerName}</td>
-      <td>${order.productName}</td>
+      <td>${order.customer_name}</td>
+      <td>${order.product_name}</td>
       <td>${order.quantity}</td>
-      <td>${formatCurrency(order.total)}</td>
-      <td>${order.date}</td>
+      <td>${formatCurrency(order.total_amount)}</td>
+      <td>${formatDate(order.order_date)}</td>
     `;
 
     orderList.appendChild(row);
   });
 }
 
-function updateDashboard() {
-  const revenue = orders.reduce((sum, order) => sum + order.total, 0);
-  const sold = orders.reduce((sum, order) => sum + order.quantity, 0);
+orderForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
 
+  const order = {
+    customer_id: Number(orderCustomer.value),
+    product_id: Number(orderProduct.value),
+    quantity: Number(orderQuantity.value)
+  };
+
+  if (!order.customer_id || !order.product_id || order.quantity <= 0) {
+    alert("Vui lòng chọn khách hàng, sản phẩm và nhập số lượng hợp lệ");
+    return;
+  }
+
+  const response = await fetch(`${API_URL}/orders`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(order)
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    alert(data.message || "Không thể tạo đơn hàng");
+    return;
+  }
+
+  alert("Tạo đơn hàng thành công");
+  orderForm.reset();
+
+  await loadAllData();
+});
+
+async function loadReport() {
+  const response = await fetch(`${API_URL}/reports`);
+  report = await response.json();
+
+  renderReport();
+}
+
+function renderReport() {
+  reportRevenue.textContent = formatCurrency(report.total_revenue);
+  reportSold.textContent = report.products_sold;
+  reportOrders.textContent = report.total_orders;
+}
+
+function updateDashboard() {
   statProducts.textContent = products.length;
   statCustomers.textContent = customers.length;
-  statOrders.textContent = orders.length;
-  statRevenue.textContent = formatCurrency(revenue);
-
-  reportRevenue.textContent = formatCurrency(revenue);
-  reportSold.textContent = sold;
-  reportOrders.textContent = orders.length;
+  statOrders.textContent = report.total_orders;
+  statRevenue.textContent = formatCurrency(report.total_revenue);
 }
 
 function formatCurrency(value) {
-  return Number(value).toLocaleString("vi-VN") + "đ";
+  return Number(value || 0).toLocaleString("vi-VN") + "đ";
+}
+
+function formatDate(value) {
+  if (!value) return "";
+  const parts = value.split("-");
+  if (parts.length !== 3) return value;
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
