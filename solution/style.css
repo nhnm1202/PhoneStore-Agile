@@ -1,4 +1,291 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
+  margin: 0;
   font-family: Arial, sans-serif;
-  margin: 20px;
+  color: #111;
+  background:
+    linear-gradient(rgba(245, 247, 248, 0.86), rgba(245, 247, 248, 0.86)),
+    radial-gradient(circle at 20% 20%, #d9dee2, transparent 30%),
+    radial-gradient(circle at 80% 70%, #cfd5da, transparent 28%),
+    #eef1f3;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-box,
+.app {
+  background: #f8f8f8;
+  border: 1px solid #bdbdbd;
+  border-radius: 6px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.login-box {
+  width: 390px;
+  padding: 56px 70px 42px;
+  position: relative;
+}
+
+.login-box::before,
+.app::before {
+  content: "Hệ thống Quản lý Cửa hàng Điện thoại        -   ×";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: bold;
+  background: linear-gradient(#e5e5e5, #d6d6d6);
+  border-bottom: 1px solid #c7c7c7;
+}
+
+.login-box h1 {
+  margin: 0 0 8px;
+  text-align: center;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.login-box p {
+  display: none;
+}
+
+.login-box input,
+.login-box button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.login-box input {
+  border: 1px solid #c9c9c9;
+  background: white;
+}
+
+.login-box button,
+.form-grid button,
+.logout {
+  border: none;
+  background: #1f1f1f;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.login-box button:hover,
+.form-grid button:hover,
+.logout:hover {
+  background: #000;
+}
+
+#loginMessage {
+  display: block;
+  color: #b91c1c;
+  font-size: 12px;
+}
+
+.login-box small {
+  color: #b91c1c;
+  font-size: 11px;
+}
+
+.app {
+  width: 980px;
+  min-height: 640px;
+  margin: 40px auto;
+  display: flex;
+  position: relative;
+  padding-top: 28px;
+}
+
+.sidebar {
+  width: 170px;
+  padding: 28px 16px;
+  background: #ededed;
+  border-right: 1px solid #d0d0d0;
+}
+
+.sidebar h2 {
+  font-size: 16px;
+  margin: 0 0 22px;
+  text-align: center;
+}
+
+.menu,
+.logout {
+  width: 100%;
+  display: block;
+  margin-bottom: 10px;
+  padding: 9px 10px;
+  border-radius: 5px;
+  border: none;
+  text-align: left;
+  background: transparent;
+  color: #111;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.menu.active,
+.menu:hover {
+  background: #d8d8d8;
+}
+
+.logout {
+  margin-top: 24px;
+  text-align: center;
+  background: #1f1f1f;
+  color: white;
+}
+
+.content {
+  flex: 1;
+  padding: 30px;
+  background: #fbfbfb;
+}
+
+.page {
+  display: none;
+}
+
+.active-page {
+  display: block;
+}
+
+h1 {
+  margin: 0 0 18px;
+  font-size: 22px;
+  text-transform: uppercase;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: 520px;
+}
+
+.card,
+.report-box,
+.form-grid,
+table {
+  background: white;
+  border: 1px solid #d2d2d2;
+  border-radius: 6px;
+}
+
+.card {
+  padding: 18px;
+}
+
+.card span {
+  display: block;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.card p {
+  margin: 5px 0 0;
+  font-weight: bold;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 9px;
+  border: 1px solid #c9c9c9;
+  border-radius: 5px;
+}
+
+.form-grid button {
+  padding: 9px;
+  border-radius: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+}
+
+th,
+td {
+  padding: 10px;
+  border-bottom: 1px solid #dedede;
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  background: #eeeeee;
+  color: #111;
+  font-weight: bold;
+}
+
+td button {
+  width: auto;
+  padding: 6px 9px;
+  margin-right: 5px;
+  margin-bottom: 0;
+  border-radius: 4px;
+  border: none;
+  background: #1f1f1f;
+  color: white;
+}
+
+.btn-edit {
+  background: #333;
+}
+
+.btn-delete {
+  background: #111;
+}
+
+.report-box {
+  max-width: 520px;
+  padding: 20px;
+  font-size: 18px;
+}
+
+@media (max-width: 900px) {
+  .app {
+    width: calc(100% - 24px);
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #d0d0d0;
+  }
+
+  .stats,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
 }
