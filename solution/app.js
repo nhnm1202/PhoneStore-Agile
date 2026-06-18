@@ -341,3 +341,20 @@ function formatDate(value) {
   if (parts.length !== 3) return value;
   return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
+
+function logout() {
+  appSection.classList.add("hidden");
+  loginSection.classList.remove("hidden");
+
+  document.getElementById("username").value = "";
+  document.getElementById("password").value = "";
+  loginMessage.textContent = "";
+
+  pages.forEach((page) => page.classList.remove("active-page"));
+  document.getElementById("dashboard").classList.add("active-page");
+
+  menuButtons.forEach((btn) => btn.classList.remove("active"));
+  document.querySelector('.menu[data-target="dashboard"]').classList.add("active");
+
+  alert("Đã đăng xuất thành công");
+}
